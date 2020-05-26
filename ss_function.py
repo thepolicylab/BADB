@@ -1,16 +1,11 @@
 import concurrent.futures
 import itertools
+import pandas as pd
 
 from smartystreets_python_sdk import StaticCredentials, exceptions, ClientBuilder
 from smartystreets_python_sdk.us_street import Lookup as StreetLookup
-from typing import List, Union, Dict
-
-
-import concurrent.futures
-import itertools
-
-import pandas as pd
 from tqdm import tqdm
+from typing import List, Dict
 
 def smarty_api(
     row: List[str],
@@ -57,11 +52,10 @@ def smarty_api(
     'match': None,
     'active': None,
     'vacant': None,
-    # include lat, lon, tmz
     'latitude': None,
     'longitude': None,
     'timezone': None,
-    'suffix': None
+    'delivery': None
   }
   try:
     client.send_lookup(lookup)
@@ -92,8 +86,7 @@ def smarty_api(
     'latitude': result.metadata.latitude,
     'longitude': result.metadata.longitude,
     'timezone': result.metadata.time_zone,
-    # instead of using the entire delivery address, should just include suffix
-    'suffix' : result.components.street_suffix
+    'delivery': result.delivery_line_1
   }
 
 def joining_permutations(
@@ -185,3 +178,6 @@ def address_hacking(test_cond: List[str],
   df = pd.concat(output_list)
   df.reset_index(drop=True, inplace=True)
   return df
+
+def sec_add(word):
+  return word.split()[-2]
