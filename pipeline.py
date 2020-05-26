@@ -93,7 +93,7 @@ def main(*args, **kwargs):
                    'type', 'rdi', 'match', 'active',
                    'vacant', 'latitude', 'longitude',
                    'timezone']].merge(df, on=['OBJECTID'], how='left')
-  badb
+  badb.to_csv('boo.csv')
 
   # upload to AWS
   s3 = boto3.client('s3')
