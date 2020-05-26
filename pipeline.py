@@ -10,8 +10,8 @@ from . import ss_function
 
 def main(*args, **kwargs):
   # read in the access keys for smarty streets
-  with open('config.csv', 'rt') as infile:
-    SS_AUTH_ID, SS_AUTH_TOKEN = infile.read().strip().split(',')
+  # with open('config.csv', 'rt') as infile:
+  #   SS_AUTH_ID, SS_AUTH_TOKEN = infile.read().strip().split(',')
 
   print("opening e911 data")
   df = pd.read_csv('E-911_Sites.csv.gz', compression='gzip').head(300)
