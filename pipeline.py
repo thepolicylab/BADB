@@ -1,20 +1,19 @@
 import boto3
 import concurrent.futures
 import itertools
-import string
 import pandas as pd
+import string
 from tqdm import tqdm
 
-from . import ss_function
-
+import ss_function
 
 def main(*args, **kwargs):
   # read in the access keys for smarty streets
-  # with open('config.csv', 'rt') as infile:
-  #   SS_AUTH_ID, SS_AUTH_TOKEN = infile.read().strip().split(',')
+  with open('config.csv', 'rt') as infile:
+    SS_AUTH_ID, SS_AUTH_TOKEN = infile.read().strip().split(',')
 
   print("opening e911 data")
-  df = pd.read_csv('E-911_Sites.csv.gz', compression='gzip').head(300)
+  df = pd.read_csv('E-911_Sites.csv.gz', compression='gzip').head(5000)
   df['State'] = 'RI'
   ss_input = df[['OBJECTID', 'PrimaryAdd', 'ZN', 'State', 'Zip']]
   ss_list = ss_input.values.tolist()
@@ -87,16 +86,20 @@ def main(*args, **kwargs):
   final_df.rename(columns={'delivery': 'prefix',
                            'object_id': 'OBJECTID'}, inplace=True)
 
-  # merge final_df with df
+  print('merging SmartyStreets results with original e911 columns')
   badb = final_df[['OBJECTID', 'prefix', 'secondary',
                    'street', 'city', 'state', 'zipcode',
                    'type', 'rdi', 'match', 'active',
                    'vacant', 'latitude', 'longitude',
                    'timezone']].merge(df, on=['OBJECTID'], how='left')
-  badb.to_csv('boo.csv')
+  badb.to_csv('e911_geocoded.csv.gz', compression='gzip')
 
-  # upload to AWS
-  s3 = boto3.client('s3')
-
+  # # upload to AWS
+  # s3 = boto3.client('s3')
+  # s3.put_object(
+  #   Bucket='thepolicylab-artifacts',
+  #   Key=f'e911/e911_geocoded.csv.gz',
+  #   Body=badb_compressed
+  # )
 if __name__ == '__main__':
   main()
