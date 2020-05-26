@@ -14,3 +14,12 @@ jobs:
       - uses: actions/checkout@v2
       - name: Create config file
         run: echo "${{ secrets.SMARTYSTREETS_CONFIG }}" > config.csv
+      - id: build_package
+        run: |
+          zip -r e911.zip pipeline.py config.csv
+#      - id: push_to_s3
+#        env:
+#          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#        run: |
+#          aws s3 cp safegraph.zip "s3://${{ secrets.S3_BUCKET }}/v1.0.0/safegraph.zip"
