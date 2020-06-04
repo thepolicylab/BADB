@@ -5,9 +5,8 @@ This repository primarily uses the E911 data available [here](https://www.rigis.
 
 ## In Scope
 ### Phase I 
-* `unique_id` Internally generated identification number associated with each unique address (01112)
-* `version` Last updated date. (1)
-
+* `unique_id` Internally generated identification number associated with each unique address
+* `version` Last updated date. 
 #### (Source: E911 Dataset)
 * `street` The street address to send the letter to (250 Main Street)
 * `secondary` The secondary component of the address (Ste A4)
@@ -21,7 +20,6 @@ This repository primarily uses the E911 data available [here](https://www.rigis.
 * `vacant` Indicates that a delivery point was active in the past but is currently vacant (in most cases, unoccupied over 90 days) and is not receiving deliveries. (Y)
 * `active` Indicates whether the address is active, or "in-service" according to the USPS.
 * `record_type` Indicates the type of record that was matched. Only given if a DPV match is made.
-
 F — Firm; the finest level of match available for an address.
 (e.g., Julie Julia 11300 Center Ave Gilroy CA 95020-9257)\
 G — General Delivery; for mail to be held at local post offices.
@@ -35,6 +33,9 @@ R — Rural Route or Highway Contract; may have box number ranges.
 S — Street; address contains a valid primary number range.
 (e.g., 16990 Monterey Rd Lake Elsinore CA 92530-7529)\
 [blank] — No record type because address did not make a valid DPV match
+#### (Source: Shape Files)
+* `Census Tract`
+* `Census Block Groups`
 
 ### Phase II:
 #### Voting Information
@@ -42,12 +43,21 @@ S — Street; address contains a valid primary number range.
 #### City Government
 * `Ward`
 #### State Legislature
+* `Congressional District`
 * `House District`
 * `Senate District`
+#### Policing:
+* `Police District`
 
 Possible Sources: 
 - Contacting Jess Cigna
-- Reach out to whoever is behind --- cityofnewport.com/living-in-newport/gis-mapping
+- DataSparks seems to have some relevant information, but in [pdf form](https://datasparkri.org/maps/)
+- Reach out to whoever is behind these city-level [websites](cityofnewport.com/living-in-newport/gis-mapping)
+
+### Out of Scope:
+* `Location image`
+* `Hyperlinks to Google Maps API`
+
 
 ### VERSION HISTORY
 - Version 1: 2020/06/04
