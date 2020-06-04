@@ -37,7 +37,17 @@ S — Street; address contains a valid primary number range.
 [blank] — No record type because address did not make a valid DPV match
 
 ### Phase II:
+#### Voting Information
+* `Voting Precinct`
+#### City Government
+* `Ward`
+#### State Legislature
+* `House District`
+* `Senate District`
 
+Possible Sources: 
+- Contacting Jess Cigna
+- Reach out to whoever is behind --- cityofnewport.com/living-in-newport/gis-mapping
 
 ### VERSION HISTORY
 - Version 1: 2020/06/04
