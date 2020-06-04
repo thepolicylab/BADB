@@ -7,13 +7,15 @@ This repository primarily uses the E911 data available [here](https://www.rigis.
 ### Phase I 
 * `unique_id` Internally generated identification number associated with each unique address ex) 01112
 
-(Source: E911 Dataset)
+#### (Source: E911 Dataset)
 * `street` The street address to send the letter to (250 Main Street)
 * `secondary` The secondary component of the address (Ste A4)
 * `city` The city component of the address (Warwick)
 * `state` The state component of the address (RI)
 * `zipcode` The ZIP code of the address 
-(Source: Smarty Streets API)
+#### (Source: Smarty Streets API)
+* `latitude` The latitude coordinate of location (64.75233)
+* `longitude` The longitude coordinate of location (-147.35297)
 * `rdi` Residential Delivery Indicator (residential or commercial)
 * `vacant`
 * `active`
