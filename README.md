@@ -1,7 +1,8 @@
 # BADB
 Big Address DataBase geocodes and maintains a copy of the e911 database in Rhode Island
 
-This repository primarily uses the E911 data available [here](https://www.rigis.org/datasets/e-911-sites). It also uses the [SmartyStreets](https://www.smartystreets.com/) API, for which you will need an API key to run this code.
+This repository primarily uses the E911 data available [here](https://www.rigis.org/datasets/e-911-sites). \
+It also uses the [SmartyStreets](https://www.smartystreets.com/) API, for which you will need an API key to run this code.
 
 ## In Scope
 ### Phase I 
