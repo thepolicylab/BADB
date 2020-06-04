@@ -20,19 +20,7 @@ This repository primarily uses the E911 data available [here](https://www.rigis.
 * `vacant` Indicates that a delivery point was active in the past but is currently vacant (in most cases, unoccupied over 90 days) and is not receiving deliveries. (Y)
 * `active` Indicates whether the address is active, or "in-service" according to the USPS.
 * `record_type` Indicates the type of record that was matched. Only given if a DPV match is made.
-F — Firm; the finest level of match available for an address.
-(e.g., Julie Julia 11300 Center Ave Gilroy CA 95020-9257)\
-G — General Delivery; for mail to be held at local post offices.
-(e.g., General Delivery Provo UT 84601)\
-H — High-rise; address contains apartment or building sub-units.
-(e.g., 1600 Pennsylvania Ave SE Washington DC 20003-3228)\
-P — Post Office box; address is a PO Box record type.
-(e.g., PO Box 4735 Tulsa OK 74159-0735)\
-R — Rural Route or Highway Contract; may have box number ranges.
-(e.g., RR 2 Box 4560 Anasco PR 00610-9393)\
-S — Street; address contains a valid primary number range.
-(e.g., 16990 Monterey Rd Lake Elsinore CA 92530-7529)\
-[blank] — No record type because address did not make a valid DPV match
+
 #### (Source: Shape Files)
 * `Census Tract`
 * `Census Block Groups`
