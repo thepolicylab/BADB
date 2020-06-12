@@ -1,3 +1,4 @@
+# Combine the outputs of 10_Secondary_Addresses.py into a master file of geocoded addresses
 import pandas as pd
 import ujson
 from pathlib import Path

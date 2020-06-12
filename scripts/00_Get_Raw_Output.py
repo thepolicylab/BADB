@@ -1,8 +1,9 @@
+# Run all addresses in the E911 Dataset through the SmartyStreets API
 import concurrent.futures
 import pandas as pd
 
 from itertools import repeat
-from pathlib import Path, PurePath
+from pathlib import Path
 from tqdm.auto import tqdm
 
 from badb import geoutils, data_utils
