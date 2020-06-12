@@ -186,3 +186,24 @@ def create_perm(num, alpha):
   alpha_first = [f'{y}{x}' for (x, y) in temp]
   perm_list = num + alpha + num_first + alpha_first
   return [num_first, alpha_first, perm_list]
+
+# Customize the permutation list for address_hacking
+num_list = list(range(1,10))
+alpha = list(string.ascii_uppercase)[0:15] ## I've never seen an apartment suite beyond 'O'
+[num_first, alpha_first, _] = create_perm(num_list, alpha)
+
+# Cross product between num_list2 and alpha
+num_list2 = appropriate_nums(range(11, 100))
+[num_first2, alpha_first2, _] = create_perm(num_list2, alpha)
+# Cross product between num_list3 and alpha
+num_list3 = appropriate_nums(range(101, 1000))
+[num_first3, alpha_first3, _] = create_perm(num_list3, alpha)
+
+# Cross product between num_list4 and alpha
+num_list4 = appropriate_nums(range(1001, 10000))
+[num_first4, alpha_first4, _] = create_perm(num_list4, alpha)
+
+perm_total = [num_list, num_list2, num_list3,
+              num_list4, alpha, num_first, num_first2,
+              num_first3, num_first4, alpha_first, alpha_first2,
+              alpha_first3, alpha_first4]
