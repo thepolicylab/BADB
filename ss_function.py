@@ -1,11 +1,22 @@
 import concurrent.futures
 import itertools
 import pandas as pd
+import json
 
 from smartystreets_python_sdk import StaticCredentials, exceptions, ClientBuilder
 from smartystreets_python_sdk.us_street import Lookup as StreetLookup
 from tqdm import tqdm
 from typing import List, Dict
+
+def collect_dict(ss_obj):
+  init_list = list(vars(ss_obj))[:-3]
+  init_dict = dict(map(lambda k: (k, vars(ss_obj).get(k, None)), init_list))
+  meta_dict = vars(ss_obj.metadata)
+  anal_dict = vars(ss_obj.analysis)
+  comp_dict = vars(ss_obj.components)
+  temp = {**init_dict, **meta_dict, **anal_dict, **comp_dict}
+  return json.dumps({str(k): str(v) for k,v in temp.items()})
+
 
 def smarty_api(
     row: List[str],
@@ -32,31 +43,31 @@ def smarty_api(
   # Lookup the Address with inputs by indexing from input `row`
   lookup = StreetLookup()
   if primary:
-    [object_id, lookup.street, lookup.city, lookup.state, lookup.zipcode] = row
+    [lookup.input_id, lookup.street, lookup.city, lookup.state, lookup.zipcode] = row
   else:
-    [lookup.secondary, object_id, lookup.street, lookup.city, lookup.state, lookup.zipcode] = row
+    [lookup.secondary, lookup.input_id, lookup.street, lookup.city, lookup.state, lookup.zipcode] = row
   lookup.candidates = 1
   lookup.match = "Invalid"  # "invalid" always returns at least one match
 
-  # make the secondary address itself a NaN.
-  # Then, you can just streamline this into a single lookupl
   default_output = {
-    'object_id': object_id,
-    'secondary': None,
+    'OBJECTID': lookup.input_id,
     'street': lookup.street,
     'city': lookup.city,
     'state': lookup.state,
     'zipcode': lookup.zipcode,
-    'type': None,
-    'rdi': None,
-    'match': None,
-    'active': None,
-    'vacant': None,
-    'latitude': None,
-    'longitude': None,
-    'timezone': None,
-    'delivery': None
+    'output': None
+  } if primary \
+    else {
+    'OBJECTID': lookup.input_id,
+    'secondary': lookup.secondary,
+    'street': lookup.street,
+    'city': lookup.city,
+    'state': lookup.state,
+    'zipcode': lookup.zipcode,
+    'output': None
   }
+  # make the secondary address itself a NaN.
+  # Then, you can just streamline this into a single lookup
   try:
     client.send_lookup(lookup)
   except exceptions.SmartyException as err:
@@ -71,23 +82,22 @@ def smarty_api(
   # res: List[List(str)], so index first element (lookup.candidates : 1)
   result = res[0]
   return {
-    'object_id': object_id,
+    'OBJECTID': lookup.input_id,
+    'street': lookup.street,
+    'city': lookup.city,
+    'state': lookup.state,
+    'zipcode': lookup.zipcode,
+    'output': collect_dict(result)
+  } if primary \
+  else {
+    'OBJECTID': lookup.input_id,
     'secondary': lookup.secondary,
     'street': lookup.street,
     'city': lookup.city,
     'state': lookup.state,
     'zipcode': lookup.zipcode,
-    'type': result.metadata.record_type,
-    'rdi': result.metadata.rdi,
-    'match': result.analysis.dpv_match_code,
-    'active': result.analysis.active,
-    'vacant': result.analysis.vacant,
-    # include lat, lon, tmz
-    'latitude': result.metadata.latitude,
-    'longitude': result.metadata.longitude,
-    'timezone': result.metadata.time_zone,
-    'delivery': result.delivery_line_1
-  }
+    'output': collect_dict(result)
+    }
 
 def joining_permutations(
     row: List[str],
@@ -110,13 +120,13 @@ def joining_permutations(
     secondary_included = [[perm] + row for perm in perm_list]
     # Apply multithreading to accelerate the search
     with concurrent.futures.ThreadPoolExecutor() as executor:
-      all_outputs = pd.DataFrame(list(executor.map(smarty_api,
+      all_outputs = pd.DataFrame(tqdm(list(executor.map(smarty_api,
                                                    secondary_included,
                                                    itertools.repeat(SS_AUTH_ID),
                                                    itertools.repeat(SS_AUTH_TOKEN)
-                                                   )))
+                                                   ))))
       # only return the permutations that returned valid entry
-      return all_outputs[all_outputs.match == 'Y']
+      return all_outputs[all_outputs.output.notna()]
 
 def appropriate_nums(num_list):
   """
@@ -138,7 +148,7 @@ def df_prep(match_cond, df: pd.DataFrame) -> pd.DataFrame:
   """
   match_df = df[df.secondary == match_cond]
   # Only return address columns, and into a list form
-  return match_df[['object_id', 'street', 'city', 'state', 'zipcode']].values.tolist()
+  return match_df[['OBJECTID', 'street', 'city', 'state', 'zipcode']].values.tolist()
 
 def joining_permutations_runner(input_list,
                                 SS_AUTH_ID: str,
