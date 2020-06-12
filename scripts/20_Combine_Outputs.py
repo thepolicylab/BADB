@@ -3,21 +3,29 @@ import pandas as pd
 import ujson
 from pathlib import Path
 
-## INPUT
+from badb import data_utils
 
-DATA_DIR = Path('data')
-SU_DIR = Path('ss_single_raw.csv.gz')
+## INPUT ##
+ROOT_DIR = data_utils.ROOT_DIR
+DATA_DIR = ROOT_DIR / Path('data')
+SINGLE_UNIT_FILE = DATA_DIR / Path('ss_single_raw.csv.gz')
+MULTI_UNIT_FILE = DATA_DIR / Path('ss_expanded_raw.csv.gz')
+
+# OUTPUT ##
+TOTAL_OUTPUT_FILE = DATA_DIR / Path('ss_total.csv.gz')
+
+
 # The verified single units
-single_unit = pd.read_csv(DATA_DIR / SU_DIR,
+single_unit = pd.read_csv(SINGLE_UNIT_FILE,
                           compression='gzip',
                           index_col=0)
 # The verified multi units
-MU_DIR = Path('ss_expanded_raw.csv.gz')
-df = pd.read_csv(DATA_DIR / MU_DIR,
-                         compression='gzip',
-                         index_col=0)
+df = pd.read_csv(MULTI_UNIT_FILE,
+                 compression='gzip',
+                 index_col=0)
 temp = pd.json_normalize(
   df.output.apply(ujson.loads))
 df.drop(['output', 'zipcode'], axis=1, inplace=True)
 multi_unit = pd.concat([df, temp], axis=1)
-multi_unit
+
+pd.concat([single_unit, multi_unit]).to_csv(TOTAL_OUTPUT_FILE)

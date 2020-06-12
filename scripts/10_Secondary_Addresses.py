@@ -19,6 +19,7 @@ RAW_OUTPUT = DATA_DIR / Path('ss_raw.csv.gz')
 SINGLE_UNIT_FILE = DATA_DIR / Path('ss_single_raw.csv.gz')
 MULTI_UNIT_FILE = DATA_DIR / Path('ss_expanded_raw.csv.gz')
 
+
 df = pd.read_csv(RAW_OUTPUT, compression='gzip', index_col=0)
 na_df = df[df.output.isna()].reset_index(drop = True)
 res_df = df[df.output.notna()].reset_index(drop=True)

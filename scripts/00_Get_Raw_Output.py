@@ -17,6 +17,7 @@ E911_FILE = ROOT_DIR / Path('data') / Path('E-911_Sites.csv.gz')
 ## OUTPUT ##
 RAW_OUTPUT = DATA_DIR / Path('ss_raw.csv.gz')
 
+
 with open(CONFIG_FILE, 'rt') as infile:
   SS_AUTH_ID, SS_AUTH_TOKEN = infile.read().strip().split(',')
 df = pd.read_csv(E911_FILE, compression='gzip')
