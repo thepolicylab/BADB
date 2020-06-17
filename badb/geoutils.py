@@ -1,14 +1,8 @@
 import concurrent.futures
-import string
 from itertools import product, repeat
-<<<<<<< HEAD
-import pandas as pd
-import string
-=======
 from typing import List, Dict, Iterable, Union
 
 import pandas as pd
->>>>>>> kevin-changes
 from smartystreets_python_sdk import StaticCredentials, exceptions, ClientBuilder
 from smartystreets_python_sdk.us_street import Lookup as StreetLookup
 from tqdm import tqdm
