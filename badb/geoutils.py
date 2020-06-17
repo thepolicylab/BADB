@@ -1,7 +1,7 @@
 import concurrent.futures
 from itertools import product, repeat
 import pandas as pd
-
+import string
 from smartystreets_python_sdk import StaticCredentials, exceptions, ClientBuilder
 from smartystreets_python_sdk.us_street import Lookup as StreetLookup
 from tqdm import tqdm
