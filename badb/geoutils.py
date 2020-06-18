@@ -2,13 +2,18 @@ import concurrent.futures
 from itertools import product, repeat
 from typing import List, Dict, Iterable, Union
 
+import geopandas as gpd
 import pandas as pd
+import requests
+import tempfile
+
+from pathlib import Path
 from smartystreets_python_sdk import StaticCredentials, exceptions, ClientBuilder
 from smartystreets_python_sdk.us_street import Lookup as StreetLookup
 from tqdm import tqdm
+from us import states
 
 from . import data_utils
-
 
 def smarty_api(
     row: List[str], SS_AUTH_ID: str, SS_AUTH_TOKEN: str, primary: bool = False
@@ -96,7 +101,7 @@ def smarty_api(
 
 
 def joining_permutations(
-    row: List[str], perm_list: List[str], SS_AUTH_ID: str, SS_AUTH_TOKEN: str
+    row: List[str], perm_list: List[str], SS_AUTH_ID: str, SS_AUTH_TOKEN: str, zipcode = False
 ) -> pd.DataFrame:
     """
     A function that adds all permutations of secondary addresses to a given address.
@@ -112,21 +117,25 @@ def joining_permutations(
         [1, 250 OCONNOR ST', 'PROVIDENCE', 'RI', 2905],
         [2, 250 OCONNOR ST', 'PROVIDENCE', 'RI', 2905], etc
     """
+    bool = False
     secondary_included = [[perm] + row for perm in perm_list]
+    if zipcode:
+        bool = True
+        secondary_included = [row + [perm] for perm in perm_list]
     # Apply multithreading to accelerate the search
     with concurrent.futures.ThreadPoolExecutor() as executor:
         all_outputs = pd.DataFrame(
-            tqdm(
-                list(
-                    executor.map(
-                        smarty_api,
-                        secondary_included,
-                        repeat(SS_AUTH_ID),
-                        repeat(SS_AUTH_TOKEN),
-                    )
+            list(
+                executor.map(
+                    smarty_api,
+                    secondary_included,
+                    repeat(SS_AUTH_ID),
+                    repeat(SS_AUTH_TOKEN),
+                    repeat(bool)
                 )
             )
         )
+
         # only return the permutations that returned valid entry
         return all_outputs[all_outputs.output.notna()]
 
@@ -227,3 +236,28 @@ def create_perm(num: List[int], alpha: List[str]) -> List[str]:
     alpha_first = [f"{y}{x}" for (x, y) in temp]
     perm_list = num + alpha + num_first + alpha_first
     return perm_list
+
+def get_shp_file(
+        input_state: str,
+        geography: str = 'zcta'
+) -> gpd.GeoDataFrame:
+  """
+  Retrieves the zipcode shapefile using US python package
+
+  Args:
+    input_state: Name of state to look up
+         For example "MA"
+    geography: determines which shapefile to download
+
+  Returns:
+    The geo dataframe for the given state at the given geography level
+  """
+  url = states.lookup(input_state).shapefile_urls(geography)
+  with tempfile.TemporaryDirectory() as tmpdir:
+    tmpdir = Path(tmpdir)
+    response = requests.get(url, stream=True)
+    outfile_name = tmpdir / f'{input_state}.zip'
+    with open(outfile_name, 'wb') as outfile:
+      for chunk in response.iter_content(chunk_size=8192):
+        outfile.write(chunk)
+    return gpd.read_file(f'zip://{outfile_name.absolute()}')

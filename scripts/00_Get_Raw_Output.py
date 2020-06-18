@@ -22,7 +22,8 @@ with open(CONFIG_FILE, 'rt') as infile:
   SS_AUTH_ID, SS_AUTH_TOKEN = infile.read().strip().split(',')
 df = pd.read_csv(E911_FILE, compression='gzip')
 df['State'] = 'RI'
-ss_input = df[['OBJECTID', 'PrimaryAdd', 'ZN', 'State', 'Zip']]
+res_df = df[df.SiteType.str.contains('R')]
+ss_input = res_df[['OBJECTID', 'PrimaryAdd', 'ZN', 'State', 'Zip']]
 ss_list = ss_input.values.tolist()
 
 with concurrent.futures.ThreadPoolExecutor() as executor:

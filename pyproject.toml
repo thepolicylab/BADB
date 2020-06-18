@@ -10,6 +10,10 @@ tqdm = "^4.46.1"
 pandas = "^1.0.4"
 smartystreets_python_sdk = "^4.5.0"
 click = "^7.1.2"
+requests = "^2.24.0"
+geopandas = "^0.7.0"
+us = "^2.0.2"
+pathlib = "^1.0.1"
 
 [tool.poetry.dev-dependencies]
 black = "^19.10b0"
