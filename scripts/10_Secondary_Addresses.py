@@ -1,10 +1,11 @@
 # Analyze the outcome from the 00_Get_Raw_Output.py into Single Units and Multiple Units
 # Re-run Multiple Units with the SmartyStreets API
-import pandas as pd
-from tqdm import tqdm
 from itertools import repeat
-import ujson
+import pandas as pd
 from pathlib import Path
+import string
+from tqdm import tqdm
+import ujson
 
 from badb import geoutils, data_utils
 
@@ -20,12 +21,10 @@ MULTI_UNIT_FILE = DATA_DIR / Path('ss_expanded.csv.gz')
 
 
 df = pd.read_csv(FIXED_OUTPUT, compression='gzip', index_col=0)
-na_df = df[df.output.isna()].reset_index(drop=True)
-res_df = df[df.output.notna()].reset_index(drop=True)
 temp = pd.json_normalize(
-  res_df.output.apply(ujson.loads))
-res_df.drop(['output', 'zipcode'], axis = 1, inplace=True)
-init_df = pd.concat([res_df, temp], axis=1)
+  df.output.apply(ujson.loads))
+df.drop(['output', 'zipcode'], axis = 1, inplace=True) # zipcode is dropped because of overlap
+init_df = pd.concat([df, temp], axis=1)
 
 single_units = init_df[(init_df.dpv_match_code == 'Y')].reset_index(drop=True)
 single_units.to_csv(SINGLE_UNIT_FILE, compression='gzip')
@@ -36,7 +35,8 @@ multi_units = init_df[init_df.dpv_match_code == ('S' or 'D')].reset_index(drop=T
 # Most apartment rooms are either just numeric, just alpha, or a permutation of the two.
 num = [1, 11, 101, 1001]
 alpha = ['A'] # just 'A', realizing additional alphabets dont necessarily help
-[num_first, alpha_first, perm_list] = geoutils.create_perm(num, alpha)
+perm_list = geoutils.create_perm(num, alpha, separate=False)
+perm_list = sorted(perm_list, key=len, reverse=True)
 
 with open(CONFIG_FILE, 'rt') as infile:
   SS_AUTH_ID, SS_AUTH_TOKEN = infile.read().strip().split(',')
@@ -48,14 +48,11 @@ mu_init = pd.concat(list(tqdm(map(geoutils.joining_permutations, mu_rerun,
                                   repeat(SS_AUTH_ID),
                                   repeat(SS_AUTH_TOKEN)))))
 
-perm_total = list(
-        set(
-            geoutils.create_perm(range(1, 10), alpha)
-            + geoutils.create_perm(geoutils.appropriate_nums(range(11, 100)), alpha)
-            + geoutils.create_perm(geoutils.appropriate_nums(range(101, 1000)), alpha)
-            + geoutils.create_perm(geoutils.appropriate_nums(range(1001, 10000)), alpha)
-        )
-    )
+alpha = list(string.ascii_uppercase[:15])
+perm_total = geoutils.create_perm(geoutils.appropriate_nums(range(1001, 10000)), alpha) \
+             + geoutils.create_perm(geoutils.appropriate_nums(range(101, 1000)), alpha) \
+             + geoutils.create_perm(geoutils.appropriate_nums(range(11, 100)), alpha) \
+             + geoutils.create_perm(range(1, 10), alpha) + [alpha]
 perm_dict = dict(zip(perm_list, perm_total))
 
 # Expansive search

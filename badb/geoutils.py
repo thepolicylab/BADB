@@ -117,10 +117,8 @@ def joining_permutations(
         [1, 250 OCONNOR ST', 'PROVIDENCE', 'RI', 2905],
         [2, 250 OCONNOR ST', 'PROVIDENCE', 'RI', 2905], etc
     """
-    bool = False
     secondary_included = [[perm] + row for perm in perm_list]
     if zipcode:
-        bool = True
         secondary_included = [row + [perm] for perm in perm_list]
     # Apply multithreading to accelerate the search
     with concurrent.futures.ThreadPoolExecutor() as executor:
@@ -131,7 +129,7 @@ def joining_permutations(
                     secondary_included,
                     repeat(SS_AUTH_ID),
                     repeat(SS_AUTH_TOKEN),
-                    repeat(bool)
+                    repeat(zipcode)
                 )
             )
         )
@@ -217,7 +215,7 @@ def address_hacking(
     return df
 
 
-def create_perm(num: List[int], alpha: List[str]) -> List[str]:
+def create_perm(num: List[int], alpha: List[str], separate = True) -> List[str]:
     """
     Create tested permuations from lists and numbers and letters.
     Specifically, for all numbers and letters passed, write potential
@@ -234,8 +232,10 @@ def create_perm(num: List[int], alpha: List[str]) -> List[str]:
     temp = list(product(num, alpha))
     num_first = [f"{x}{y}" for (x, y) in temp]
     alpha_first = [f"{y}{x}" for (x, y) in temp]
-    perm_list = num + alpha + num_first + alpha_first
-    return perm_list
+    if separate:
+        return [num_first, alpha_first, num]
+    else:
+        return num + alpha + num_first + alpha_first
 
 def get_shp_file(
         input_state: str,
