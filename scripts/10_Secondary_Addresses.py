@@ -2,7 +2,7 @@
 # Re-run Multiple Units with the SmartyStreets API
 import pandas as pd
 from tqdm import tqdm
-from itertools import repeat, product
+from itertools import repeat
 import ujson
 from pathlib import Path
 
@@ -12,16 +12,15 @@ from badb import geoutils, data_utils
 ROOT_DIR = data_utils.ROOT_DIR
 CONFIG_FILE = ROOT_DIR / Path('config.csv')
 DATA_DIR = ROOT_DIR / Path('data')
-E911_FILE = ROOT_DIR / Path('data') / Path('E-911_Sites.csv.gz')
-RAW_OUTPUT = DATA_DIR / Path('ss_raw.csv.gz')
+FIXED_OUTPUT = DATA_DIR / Path('ss_fixed.csv.gz')
 
 ## OUTPUT ##
-SINGLE_UNIT_FILE = DATA_DIR / Path('ss_single_raw.csv.gz')
-MULTI_UNIT_FILE = DATA_DIR / Path('ss_expanded_raw.csv.gz')
+SINGLE_UNIT_FILE = DATA_DIR / Path('ss_single.csv.gz')
+MULTI_UNIT_FILE = DATA_DIR / Path('ss_expanded.csv.gz')
 
 
-df = pd.read_csv(RAW_OUTPUT, compression='gzip', index_col=0)
-na_df = df[df.output.isna()].reset_index(drop = True)
+df = pd.read_csv(FIXED_OUTPUT, compression='gzip', index_col=0)
+na_df = df[df.output.isna()].reset_index(drop=True)
 res_df = df[df.output.notna()].reset_index(drop=True)
 temp = pd.json_normalize(
   res_df.output.apply(ujson.loads))

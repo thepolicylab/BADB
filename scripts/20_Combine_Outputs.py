@@ -8,8 +8,8 @@ from badb import data_utils
 ## INPUT ##
 ROOT_DIR = data_utils.ROOT_DIR
 DATA_DIR = ROOT_DIR / Path('data')
-SINGLE_UNIT_FILE = DATA_DIR / Path('ss_single_raw.csv.gz')
-MULTI_UNIT_FILE = DATA_DIR / Path('ss_expanded_raw.csv.gz')
+SINGLE_UNIT_FILE = DATA_DIR / Path('ss_single.csv.gz')
+MULTI_UNIT_FILE = DATA_DIR / Path('ss_expanded.csv.gz')
 
 # OUTPUT ##
 TOTAL_OUTPUT_FILE = DATA_DIR / Path('ss_total.csv.gz')
@@ -28,4 +28,5 @@ temp = pd.json_normalize(
 df.drop(['output', 'zipcode'], axis=1, inplace=True)
 multi_unit = pd.concat([df, temp], axis=1)
 
-pd.concat([single_unit, multi_unit]).to_csv(TOTAL_OUTPUT_FILE)
+pd.concat([single_unit, multi_unit])\
+  .to_csv(TOTAL_OUTPUT_FILE, compression='gzip')
