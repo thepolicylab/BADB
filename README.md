@@ -21,7 +21,7 @@ It also uses the [SmartyStreets](https://www.smartystreets.com/) API, for which 
 * `vacant` Indicates that a delivery point was active in the past but is currently vacant (in most cases, unoccupied over 90 days) and is not receiving deliveries. (Y)
 * `active` Indicates whether the address is active, or "in-service" according to the USPS.
 * `record_type` Indicates the type of record that was matched. Only given if a DPV match is made.
-
+* `Congressional District`
 #### (Source: Shape Files)
 * `Census Tract`
 * `Census Block Groups`
@@ -32,7 +32,6 @@ It also uses the [SmartyStreets](https://www.smartystreets.com/) API, for which 
 #### City Government
 * `Ward`
 #### State Legislature
-* `Congressional District`
 * `House District`
 * `Senate District`
 #### Policing:
