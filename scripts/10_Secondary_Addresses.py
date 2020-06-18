@@ -49,8 +49,15 @@ mu_init = pd.concat(list(tqdm(map(geoutils.joining_permutations, mu_rerun,
                                   repeat(SS_AUTH_ID),
                                   repeat(SS_AUTH_TOKEN)))))
 
-
-perm_dict = dict(zip(perm_list, geoutils.perm_total))
+perm_total = list(
+        set(
+            geoutils.create_perm(range(1, 10), alpha)
+            + geoutils.create_perm(geoutils.appropriate_nums(range(11, 100)), alpha)
+            + geoutils.create_perm(geoutils.appropriate_nums(range(101, 1000)), alpha)
+            + geoutils.create_perm(geoutils.appropriate_nums(range(1001, 10000)), alpha)
+        )
+    )
+perm_dict = dict(zip(perm_list, perm_total))
 
 # Expansive search
 in_sample_key = list(mu_init.secondary.unique())
