@@ -13,21 +13,21 @@ from badb import geoutils, data_utils
 ROOT_DIR = data_utils.ROOT_DIR
 CONFIG_FILE = ROOT_DIR / Path('config.csv')
 DATA_DIR = ROOT_DIR / Path('data')
-FIXED_OUTPUT = DATA_DIR / Path('ss_fixed.csv.gz')
+FIXED_OUTPUT = DATA_DIR / Path('01_ss_fixed.csv.gz')
 
 ## OUTPUT ##
-SINGLE_UNIT_FILE = DATA_DIR / Path('ss_single.csv.gz')
-MULTI_UNIT_FILE = DATA_DIR / Path('ss_expanded.csv.gz')
+SINGLE_UNIT_FILE = DATA_DIR / Path('10_ss_single.csv.gz')
+MULTI_UNIT_FILE = DATA_DIR / Path('11_ss_expanded.csv.gz')
 
 
-df = pd.read_csv(FIXED_OUTPUT, compression='gzip', index_col=0)
+df = pd.read_csv(FIXED_OUTPUT, compression='gzip')
 temp = pd.json_normalize(
   df.output.apply(ujson.loads))
 df.drop(['output', 'zipcode'], axis = 1, inplace=True) # zipcode is dropped because of overlap
 init_df = pd.concat([df, temp], axis=1)
 
 single_units = init_df[(init_df.dpv_match_code == 'Y')].reset_index(drop=True)
-single_units.to_csv(SINGLE_UNIT_FILE, compression='gzip')
+single_units.to_csv(SINGLE_UNIT_FILE, compression='gzip', index=False)
 multi_units = init_df[init_df.dpv_match_code == ('S' or 'D')].reset_index(drop=True)
 
 
@@ -60,4 +60,4 @@ in_sample_key = list(mu_init.secondary.unique())
 in_sample_val = [perm_dict[perm] for perm in in_sample_key]
 total_hacked = geoutils.address_hacking(in_sample_key, in_sample_val, mu_init, SS_AUTH_ID, SS_AUTH_TOKEN)
 
-total_hacked.to_csv(MULTI_UNIT_FILE, compression='gzip')
+total_hacked.to_csv(MULTI_UNIT_FILE, compression='gzip', index=False)

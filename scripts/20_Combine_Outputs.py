@@ -8,11 +8,11 @@ from badb import data_utils
 ## INPUT ##
 ROOT_DIR = data_utils.ROOT_DIR
 DATA_DIR = ROOT_DIR / Path('data')
-SINGLE_UNIT_FILE = DATA_DIR / Path('ss_single.csv.gz')
-MULTI_UNIT_FILE = DATA_DIR / Path('ss_expanded.csv.gz')
+SINGLE_UNIT_FILE = DATA_DIR / Path('10_ss_single.csv.gz')
+MULTI_UNIT_FILE = DATA_DIR / Path('11_ss_expanded.csv.gz')
 
 # OUTPUT ##
-TOTAL_OUTPUT_FILE = DATA_DIR / Path('ss_total.csv.gz')
+TOTAL_OUTPUT_FILE = DATA_DIR / Path('20_ss_total.csv.gz')
 
 
 # The verified single units
@@ -29,4 +29,4 @@ df.drop(['output', 'zipcode'], axis=1, inplace=True)
 multi_unit = pd.concat([df, temp], axis=1)
 
 pd.concat([single_unit, multi_unit])\
-  .to_csv(TOTAL_OUTPUT_FILE, compression='gzip')
+  .to_csv(TOTAL_OUTPUT_FILE, compression='gzip', index=False)

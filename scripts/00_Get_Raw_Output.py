@@ -15,7 +15,7 @@ DATA_DIR = ROOT_DIR / Path('data')
 E911_FILE = ROOT_DIR / Path('data') / Path('E-911_Sites.csv.gz')
 
 ## OUTPUT ##
-RAW_OUTPUT = DATA_DIR / Path('ss_raw.csv.gz')
+RAW_OUTPUT = DATA_DIR / Path('00_ss_raw.csv.gz')
 
 
 with open(CONFIG_FILE, 'rt') as infile:
@@ -37,4 +37,4 @@ with concurrent.futures.ThreadPoolExecutor() as executor:
   )
 
 # Output raw output
-init_df.to_csv(RAW_OUTPUT, compression='gzip')
+init_df.to_csv(RAW_OUTPUT, compression='gzip', index=False)
