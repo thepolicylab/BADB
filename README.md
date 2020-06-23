@@ -5,11 +5,11 @@ Big Address DataBase geocodes and maintains a copy of the e911 database in Rhode
 The `BADB` package relies on `poetry`. `poetry` is a tool for dependency management and packaging in Python. \
 You can learn more about `poetry` [here](https://python-poetry.org/docs/)
 ```
-poetry check   				# ensure that you have poetry installed, and that the .toml file is correct
-python3 -m venv venv 		# create a virtual environment
+poetry check # ensure that you have poetry installed, and that the .toml file is correct
+python3 -m venv venv # create a virtual environment
 source venv/bin/activate	# activate the virtual environment
-poetry install 				# The install command reads the pyproject.toml file from the current project, resolves the dependencies, and installs them.
-poetry build   				# The build command builds the source and wheels archives.
+poetry install # The install command reads the pyproject.toml file from the current project, resolves the dependencies, and installs them.
+poetry build # The build command builds the source and wheels archives.
 poetry run badb     		
 ```
 
