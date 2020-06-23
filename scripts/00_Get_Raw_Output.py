@@ -18,23 +18,24 @@ E911_FILE = ROOT_DIR / Path('data') / Path('E-911_Sites.csv.gz')
 RAW_OUTPUT = DATA_DIR / Path('00_ss_raw.csv.gz')
 
 
-with open(CONFIG_FILE, 'rt') as infile:
-  SS_AUTH_ID, SS_AUTH_TOKEN = infile.read().strip().split(',')
-df = pd.read_csv(E911_FILE, compression='gzip')
-df['State'] = 'RI'
-res_df = df[df.SiteType.str.contains('R')]
-ss_input = res_df[['OBJECTID', 'PrimaryAdd', 'ZN', 'State', 'Zip']]
-ss_list = ss_input.values.tolist()
+# with open(CONFIG_FILE, 'rt') as infile:
+#   SS_AUTH_ID, SS_AUTH_TOKEN = infile.read().strip().split(',')
+def preliminary_test(SS_AUTH_ID, SS_AUTH_TOKEN):
+  df = pd.read_csv(E911_FILE, compression='gzip')
+  df['State'] = 'RI'
+  res_df = df[df.SiteType.str.contains('R')]
+  ss_input = res_df[['OBJECTID', 'PrimaryAdd', 'ZN', 'State', 'Zip']]
+  ss_list = ss_input.values.tolist()
 
-with concurrent.futures.ThreadPoolExecutor() as executor:
-  init_df = pd.DataFrame.from_dict(
-    list(tqdm(executor.map(geoutils.smarty_api, ss_list,
-                           repeat(SS_AUTH_ID),
-                           repeat(SS_AUTH_TOKEN),
-                           repeat(True)), total=len(ss_list)
-              )
-         )
-  )
+  with concurrent.futures.ThreadPoolExecutor() as executor:
+    init_df = pd.DataFrame.from_dict(
+      list(tqdm(executor.map(geoutils.smarty_api, ss_list,
+                             repeat(SS_AUTH_ID),
+                             repeat(SS_AUTH_TOKEN),
+                             repeat(True)), total=len(ss_list)
+                )
+           )
+    )
 
-# Output raw output
-init_df.to_csv(RAW_OUTPUT, compression='gzip', index=False)
+  # Output raw output
+  init_df.to_csv(RAW_OUTPUT, compression='gzip', index=False)
