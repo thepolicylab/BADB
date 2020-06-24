@@ -21,6 +21,12 @@ poetry run badb
 The script was designed primarily for the E-911 database of Rhode Island. For further exploration, the E-911 data available [here](https://www.rigis.org/datasets/e-911-sites). \
 For further information regarding the [SmartyStreets](https://www.smartystreets.com/) services and API, refer to the [documentation](https://smartystreets.com/docs/cloud/us-street-api)
 
+## Getting started:
+Going to the terminal and typing:
+```
+badb
+```
+Shows available functions 
 
 ### VERSION HISTORY
 - Version 1: 2020/06/04
