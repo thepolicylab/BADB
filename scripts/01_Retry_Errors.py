@@ -23,15 +23,16 @@ df = pd.read_csv(RAW_OUTPUT, compression='gzip')
 zip_list = list(geoutils.get_shp_file('RI').ZCTA5CE10)
 
 redo_df = df[df.output.isna()]
-redo_df.city = None
+if not redo_df.empty:
+  redo_df.city = None
 
-ss_input = redo_df[['OBJECTID', 'street', 'city', 'state']].values.tolist()
-zip_hacked = pd.concat(list(tqdm(map(geoutils.joining_permutations, ss_input,
-                                  repeat(zip_list),
-                                  repeat(SS_AUTH_ID),
-                                  repeat(SS_AUTH_TOKEN),
-                                  repeat(True)))))
-zip_hacked.drop_duplicates(subset=['OBJECTID', 'street', 'city', 'state', 'zipcode'], inplace=True)
-# Combine zip_hacked with Output that did not need redo, and output
-df[df.output.notna()].append(zip_hacked).reset_index(drop=True)\
-  .to_csv(FIXED_OUTPUT, compression='gzip', index=False)
+  ss_input = redo_df[['OBJECTID', 'street', 'city', 'state']].values.tolist()
+  zip_hacked = pd.concat(list(tqdm(map(geoutils.joining_permutations, ss_input,
+                                    repeat(zip_list),
+                                    repeat(SS_AUTH_ID),
+                                    repeat(SS_AUTH_TOKEN),
+                                    repeat(True)))))
+  zip_hacked.drop_duplicates(subset=['OBJECTID', 'street', 'city', 'state', 'zipcode'], inplace=True)
+  # Combine zip_hacked with Output that did not need redo, and output
+  df[df.output.notna()].append(zip_hacked).reset_index(drop=True)\
+    .to_csv(FIXED_OUTPUT, compression='gzip', index=False)

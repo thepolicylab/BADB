@@ -15,6 +15,7 @@ geopandas = "^0.7.0"
 us = "^2.0.2"
 pathlib = "^1.0.1"
 ujson = "^3.0.0"
+rtree = "^0.9.4"
 
 [tool.poetry.dev-dependencies]
 black = "^19.10b0"

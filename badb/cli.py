@@ -138,23 +138,26 @@ def expand_command(
 
     click.echo("Running initial check for multi-unit buildings")
     main.preliminary_test(
-        INPUT_FILE_DIR=address_list,
+        input_file_dir=address_list,
         state=state,
         num_addresses=num_addresses,
-        SS_AUTH_ID=auth_id,
-        SS_AUTH_TOKEN=auth_token
+        ss_auth_id=auth_id,
+        ss_auth_token=auth_token
     )
     click.echo("Retrying Sample for Errors")
     main.retry_errors(
         state=state,
-        SS_AUTH_ID=auth_id,
-        SS_AUTH_TOKEN=auth_token
+        ss_auth_id=auth_id,
+        ss_auth_token=auth_token
     )
     main.secondary_addresses(
-        SS_AUTH_ID=auth_id,
-        SS_AUTH_TOKEN=auth_token
+        ss_auth_id=auth_id,
+        ss_auth_token=auth_token
     )
 
+    main.append_census_data(
+        state=state
+    )
 
 if __name__ == "__main__":
     cli()
