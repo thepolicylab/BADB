@@ -11,7 +11,7 @@ import click
 import pandas as pd
 from tqdm import tqdm
 
-from . import geoutils, file_utils
+from . import geoutils, file_utils, main
 
 
 @click.group()
@@ -108,6 +108,7 @@ def chunk_command(filename: str, num_rows: int, suffix: str, output_directory: s
     default=None,
     help="How many rows from address_file to expand. Default is all.",
 )
+# make sure that this address list exists
 @click.argument("address_list", type=click.Path(exists=True))
 def expand_command(
     address_list: str,
@@ -132,73 +133,26 @@ def expand_command(
         with open(config, "rt") as infile:
             auth_id, auth_token = infile.read().strip().split(",")
 
-    click.echo("Opening e911 data")
-    df = pd.read_csv(
-        address_list, nrows=num_addresses
-    )  # N.B. if num_addresses is None this will read the whole file
-    df["State"] = state
-    ss_input = df[["OBJECTID", "PrimaryAdd", "ZN", "State", "Zip"]]
+    if not main.DATA_DIR.exists():
+        main.DATA_DIR.mkdir()
 
     click.echo("Running initial check for multi-unit buildings")
-    with ThreadPoolExecutor() as executor:
-        init_df = pd.DataFrame.from_dict(
-            list(
-                tqdm(
-                    executor.map(
-                        geoutils.smarty_api,
-                        (row for row in ss_input.values),
-                        its.repeat(auth_id),
-                        its.repeat(auth_token),
-                        its.repeat(True),
-                    ),
-                    total=len(ss_input),
-                )
-            )
-        )
-
-    single_units = init_df[init_df.match == "Y"].reset_index(drop=True)
-    invalid_address = init_df[init_df.match.isnull()].reset_index(drop=True)
-    multi_units = init_df[(init_df.match == "S") | (init_df.match == "D")].reset_index(
-        drop=True
+    main.preliminary_test(
+        INPUT_FILE_DIR=address_list,
+        state=state,
+        num_addresses=num_addresses,
+        SS_AUTH_ID=auth_id,
+        SS_AUTH_TOKEN=auth_token
     )
-    click.echo(
-        f"Of {len(df)} addresses checked, {len(single_units)} were single units, {len(multi_units)} were multi-units, and {len(invalid_address)} were invalid"
+    click.echo("Retrying Sample for Errors")
+    main.retry_errors(
+        state=state,
+        SS_AUTH_ID=auth_id,
+        SS_AUTH_TOKEN=auth_token
     )
-
-    click.echo("Creating test permutations...")
-    num = [1, 11, 101, 1001]
-    alpha = ["A"]
-    perm_list = geoutils.create_perm(num, alpha)
-
-    click.echo("Testing initial set of potential unit numbers...")
-    mu_rerun = multi_units[
-        ["object_id", "street", "city", "state", "zipcode"]
-    ].values.tolist()
-    mu_init = pd.concat(
-        list(
-            tqdm(
-                map(
-                    geoutils.joining_permutations,
-                    mu_rerun,
-                    its.repeat(perm_list),
-                    its.repeat(auth_id),
-                    its.repeat(auth_token),
-                ),
-                total=len(mu_rerun),
-            )
-        )
-    )
-
-    click.echo("Creating full permutations...")
-    # Up through 'O'
-    alpha = string.ascii_uppercase[:15]
-    samp_total = list(
-        set(
-            geoutils.create_perm(range(1, 10), alpha)
-            + geoutils.create_perm(geoutils.appropriate_nums(range(11, 100)), alpha)
-            + geoutils.create_perm(geoutils.appropriate_nums(range(101, 1000)), alpha)
-            + geoutils.create_perm(geoutils.appropriate_nums(range(1001, 10000)), alpha)
-        )
+    main.secondary_addresses(
+        SS_AUTH_ID=auth_id,
+        SS_AUTH_TOKEN=auth_token
     )
 
 
