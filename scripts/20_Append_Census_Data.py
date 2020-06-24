@@ -1,4 +1,4 @@
-# Include Census information
+# Include Census information to output from 10_Secondary_Address.py
 import pandas as pd
 from pathlib import Path
 import geopandas as gpd

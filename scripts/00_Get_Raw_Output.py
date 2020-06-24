@@ -1,4 +1,4 @@
-# Run all addresses in the E911 Dataset through the SmartyStreets API
+# Run all addresses in the E911 Dataset and validates input addresses with the SmartyStreets API
 import concurrent.futures
 import pandas as pd
 

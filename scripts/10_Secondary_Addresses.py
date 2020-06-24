@@ -1,5 +1,5 @@
-# Analyze the outcome from the 00_Get_Raw_Output.py into Single Units and Multiple Units
-# Re-run Multiple Units with the SmartyStreets API
+# Expands multi-unit addresses from `00_Get_Raw_Output.py`
+# by testing out various secondary address formats Re-run Multiple Units with the SmartyStreets API
 from itertools import repeat
 import pandas as pd
 from pathlib import Path
