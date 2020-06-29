@@ -6,6 +6,7 @@ import geopandas as gpd
 import pandas as pd
 import requests
 import tempfile
+import ujson
 
 from pathlib import Path
 from smartystreets_python_sdk import StaticCredentials, exceptions, ClientBuilder
@@ -135,7 +136,13 @@ def joining_permutations(
         )
 
         # only return the permutations that returned valid entry
-        return all_outputs[all_outputs.output.notna()]
+        notna_output = all_outputs[all_outputs.output.notna()].reset_index(drop=True)
+        temp = pd.json_normalize(
+            notna_output.output.apply(ujson.loads))
+        if len(temp.dpv_match_code.unique()) != 1:
+            return notna_output[temp.dpv_match_code == 'Y']
+        else:
+            return notna_output
 
 
 def appropriate_nums(num_list: Iterable[int]) -> List[int]:

@@ -12,8 +12,8 @@ from badb import geoutils, data_utils
 ROOT_DIR = data_utils.ROOT_DIR
 CONFIG_FILE = ROOT_DIR / Path('config.csv')
 DATA_DIR = ROOT_DIR / Path('data')
-E911_FILE = ROOT_DIR / Path('data') / Path('E-911_Sites.csv.gz')
-STATE = 'RI'
+E911_FILE = ROOT_DIR / Path('data') / Path('IL_example.csv')
+STATE = 'IL'
 
 ## OUTPUT ##
 RAW_OUTPUT = DATA_DIR / Path('00_ss_raw.csv.gz')
@@ -23,13 +23,12 @@ with open(CONFIG_FILE, 'rt') as infile:
   SS_AUTH_ID, SS_AUTH_TOKEN = infile.read().strip().split(',')
 
 try:
-  df = pd.read_csv(E911_FILE, compression='gzip', index_col=0)
+  df = pd.read_csv(E911_FILE)
 except:
   print('wrong file')
   exit()
 df['State'] = STATE
-res_df = df[df.SiteType.str.contains('R')]
-ss_input = res_df[['OBJECTID', 'PrimaryAdd', 'ZN', 'State', 'Zip']]
+ss_input = df[['OBJECTID', 'PrimaryAdd', 'ZN', 'State', 'Zip']]
 ss_list = ss_input.values.tolist()
 
 with concurrent.futures.ThreadPoolExecutor() as executor:

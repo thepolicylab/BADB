@@ -75,6 +75,7 @@ def retry_errors(state, ss_auth_id, ss_auth_token, FIXED_OUTPUT=FIXED_OUTPUT):
     zip_hacked.drop_duplicates(subset=['OBJECTID', 'street', 'city', 'state', 'zipcode'], inplace=True)
     # Combine zip_hacked with Output that did not need redo, and output
     df[df.output.notna()].append(zip_hacked).reset_index(drop=True) \
+      .drop_duplicates() \
       .to_csv(FIXED_OUTPUT, compression='gzip', index=False)
 
 
@@ -87,7 +88,8 @@ def secondary_addresses(ss_auth_id, ss_auth_token,
   df.drop(['output', 'zipcode'], axis=1, inplace=True)  # zipcode is dropped because of overlap
   init_df = pd.concat([df, temp], axis=1)
   single_units = init_df[(init_df.dpv_match_code == 'Y')].reset_index(drop=True)
-  multi_units = init_df[init_df.dpv_match_code == ('S' or 'D')].reset_index(drop=True)
+  multi_units = init_df[(init_df.dpv_match_code == 'S') |
+                        (init_df.dpv_match_code == 'D')].reset_index(drop=True)
   click.echo(f'Total Entries: {len(df)}, '
              f'Single Unit Entries: {len(single_units)}, '
              f'Multi Unit Entries: {len(multi_units)}')
@@ -129,9 +131,9 @@ def secondary_addresses(ss_auth_id, ss_auth_token,
 
     click.echo("Writing a combined output file")
     pd.concat(
-      [pd.concat([total_hacked, temp], axis=1), single_units].to_csv(
+      [pd.concat([total_hacked, temp], axis=1), single_units]
+    ).to_csv(
         TOTAL_OUTPUT_FILE, compression='gzip', index=False)
-    )
 
 
 def append_census_data(state,

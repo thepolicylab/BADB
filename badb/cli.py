@@ -1,17 +1,10 @@
-import gzip
-import itertools as its
-import string
-from concurrent.futures import ThreadPoolExecutor
-from contextlib import closing, contextmanager
-from functools import partial
+from contextlib import closing
 from pathlib import Path
 from typing import Optional
 
 import click
-import pandas as pd
-from tqdm import tqdm
 
-from . import geoutils, file_utils, main
+from . import file_utils, main
 
 
 @click.group()

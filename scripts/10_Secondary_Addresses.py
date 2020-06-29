@@ -25,7 +25,8 @@ df.drop(['output', 'zipcode'], axis = 1, inplace=True) # zipcode is dropped beca
 init_df = pd.concat([df, temp], axis=1)
 
 single_units = init_df[(init_df.dpv_match_code == 'Y')].reset_index(drop=True)
-multi_units = init_df[init_df.dpv_match_code == ('S' or 'D')].reset_index(drop=True)
+multi_units = init_df[(init_df.dpv_match_code == 'S') |
+                      (init_df.dpv_match_code == 'D')].reset_index(drop=True)
 
 if multi_units.empty:
   single_units.to_csv(TOTAL_OUTPUT_FILE, compression='gzip', index=False)
@@ -58,11 +59,11 @@ if not multi_units.empty:
   # Expansive search
   in_sample_key = list(mu_init.secondary.unique())
   in_sample_val = [perm_dict[perm] for perm in in_sample_key]
+
   total_hacked = geoutils.address_hacking(in_sample_key, in_sample_val, mu_init, SS_AUTH_ID, SS_AUTH_TOKEN)
   temp = pd.json_normalize(total_hacked.output.apply(ujson.loads))
   total_hacked.drop(['output', 'zipcode'], axis=1, inplace=True)
 
   pd.concat(
-    [pd.concat([total_hacked, temp], axis=1), single_units].to_csv(
+    [pd.concat([total_hacked, temp], axis=1), single_units]).to_csv(
       TOTAL_OUTPUT_FILE, compression='gzip', index=False)
-  )
