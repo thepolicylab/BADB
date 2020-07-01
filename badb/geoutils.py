@@ -137,12 +137,16 @@ def joining_permutations(
 
         # only return the permutations that returned valid entry
         notna_output = all_outputs[all_outputs.output.notna()].reset_index(drop=True)
-        temp = pd.json_normalize(
-            notna_output.output.apply(ujson.loads))
-        if len(temp.dpv_match_code.unique()) != 1:
-            return notna_output[temp.dpv_match_code == 'Y']
-        else:
-            return notna_output
+        if not notna_output.empty:
+            temp = pd.json_normalize(
+                notna_output.output.apply(ujson.loads))
+            dup_vals = [not dup_val for dup_val in temp.zipcode.duplicated()]
+            # remove duplicate matches
+            if len(temp.dpv_match_code.unique()) != 1:
+                return notna_output[temp.dpv_match_code == 'Y']
+            else:
+                return notna_output[dup_vals]
+        return None
 
 
 def appropriate_nums(num_list: Iterable[int]) -> List[int]:

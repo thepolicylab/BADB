@@ -3,8 +3,11 @@ from pathlib import Path
 from typing import Optional
 
 import click
+import pandas as pd
 
 from . import file_utils, main
+# suppressing deprecated SettingwithCopyWarning
+pd.options.mode.chained_assignment = None
 
 
 @click.group()
@@ -151,6 +154,8 @@ def expand_command(
     main.append_census_data(
         state=state
     )
+
+# def sample(address_list: str):
 
 if __name__ == "__main__":
     cli()

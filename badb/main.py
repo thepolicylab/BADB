@@ -141,8 +141,18 @@ def append_census_data(state,
                        census_joined_output=CENSUS_JOINED_OUTPUT,
                        ri_crs=RI_CRS):
   click.echo("appending census data")
-  df = pd.read_csv(total_output_file,
+  df = pd.read_csv(TOTAL_OUTPUT_FILE,
                    compression='gzip')
+  df.drop(['candidate_index', 'addressee', 'delivery_line_1', 'delivery_line_2', 'input_id',
+           'last_line', 'delivery_point_barcode', 'record_type', 'zip_type',
+           'county_fips', 'county_name', 'carrier_route', 'elot_sequence', 'elot_sort',
+           'precision', 'time_zone', 'utc_offset', 'obeys_dst', 'is_ews_match', 'dpv_footnotes',
+           'cmra', 'footnotes', 'lacs_link_code', 'lacs_link_indicator', 'is_suite_link_match',
+           'urbanization', 'primary_number', 'street_name', 'street_predirection',
+           'street_postdirection', 'street_suffix', 'secondary_number', 'extra_secondary_number',
+           'extra_secondary_designator', 'pmb_designator', 'pmb_number',
+           'city_name', 'default_city_name', 'state_abbreviation', 'plus4_code', 'delivery_point',
+           'delivery_point_check_digit'], axis=1, inplace=True)
   col_names = list(df.columns) + ['COUNTYFP10', 'TRACTCE10', 'BLKGRPCE10']
   geo_df = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df.longitude, df.latitude))
   geo_df.crs = ri_crs
@@ -150,3 +160,4 @@ def append_census_data(state,
   cbg_shp.crs = ri_crs
   joined_df = gpd.sjoin(geo_df, cbg_shp, op='within')[col_names]
   joined_df.to_csv(census_joined_output, compression='gzip', index=False)
+  joined_df[['rdi', 'latitude', 'longitude']]
