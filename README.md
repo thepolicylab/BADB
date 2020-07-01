@@ -11,13 +11,16 @@ For further detail, refer to the READ.me files contained within each folder.
 The `BADB` package relies on `poetry`. `poetry` is a tool for dependency management and packaging in Python. \
 You can learn more about `poetry` [here](https://python-poetry.org/docs/)
 ```
-poetry check    # ensure that you have poetry installed, and that the .toml file is correct
-python3 -m venv venv    
-source venv/bin/activate    
+poetry check    # ensure that you have poetry installed, and that the .toml file is correct  
 poetry install    # The install command reads the pyproject.toml file from the current project, resolves the dependencies, and installs them.
 poetry build    # The build command builds the source and wheels archives.
 poetry run badb     		
 ```
+or alternatively, you can exchange the last line with
+```
+poetry shell
+```
+
 The script was designed primarily for the E-911 database of Rhode Island. For further exploration, the E-911 data available [here](https://www.rigis.org/datasets/e-911-sites). \
 For further information regarding the [SmartyStreets](https://www.smartystreets.com/) services and API, refer to the [documentation](https://smartystreets.com/docs/cloud/us-street-api)
 Refer to their [pricing page](https://smartystreets.com/pricing) for associated costs of generating an API key to run this package! (The scripts make exhaustive searches for accurate outputs, i.e each address may need more than 1 call on the API. Therefore, the unlimited service is highly recommended!)
