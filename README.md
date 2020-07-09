@@ -10,15 +10,16 @@ For further detail, refer to the READ.me files contained within each folder.
 ## Set up:
 The `BADB` package relies on `poetry`. `poetry` is a tool for dependency management and packaging in Python. \
 You can learn more about `poetry` [here](https://python-poetry.org/docs/)
+(If you are struggling to download `poetry` even after following the documentation, I have some suggestions in the Appendix.)
 ```
 poetry check    # ensure that you have poetry installed, and that the .toml file is correct  
 poetry install    # The install command reads the pyproject.toml file from the current project, resolves the dependencies, and installs them.
 poetry build    # The build command builds the source and wheels archives.
-poetry run badb     		
+poetry shell    		
 ```
-or alternatively, you can exchange the last line with
+Now, you can activate the CLI (Command Line Interface) by running the `badb` command
 ```
-poetry shell
+badb
 ```
 
 The script was designed primarily for the E-911 database of Rhode Island. For further exploration, the E-911 data available [here](https://www.rigis.org/datasets/e-911-sites). \
@@ -46,6 +47,21 @@ For efficiency, the `expand` command only searches for addresses in a single spe
 ```
 badb expand --state IL -c path_to_config/config.csv path_to_file/file.csv
 ```
+
+### Appendix
+#### Q: `poetry` just doesnt seem to be working!
+I have personally found the easiest way to install `poetry` is to use `Homebrew`. 
+If you do not have `Homebrew` already installed, paste the following in a macOS Terminal or Linux shell prompt:
+```
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+```
+or refer to the following [documentation](https://brew.sh/).
+
+If you already have `Homebrew` installed, you can install poetry with:
+```
+brew install poetry
+```
+
 
 ### VERSION HISTORY
 - Version 1: 2020/06/04
