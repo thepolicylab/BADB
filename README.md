@@ -62,6 +62,14 @@ If you already have `Homebrew` installed, you can install poetry with:
 brew install poetry
 ```
 
+#### Q: `rtree` is causing issues!
+This is a very common problem, so fear not. If you are having trouble with `Rtree` after running `poetry install`, this means that `rtree` cannot be downloaded.
+This may be because you are missing a dependency: `spatialindex`.
+You can download `spatialindex` using the following command:
+```
+brew install spatialindex
+pip install Rtree
+```
 
 ### VERSION HISTORY
 - Version 1: 2020/06/04
