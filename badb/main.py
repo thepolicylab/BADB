@@ -33,7 +33,9 @@ def preliminary_test(input_file_dir, state, num_addresses, ss_auth_id, ss_auth_t
     ss_input = df[['OBJECTID', 'PrimaryAdd', 'ZN', 'State', 'Zip']]
   except:
     click.echo('Column names are incorrect')
-    click.echo(f'Current Input columns are: {list(ss_input.columns)}')
+    click.echo(f'Current Input columns are: {list(df.columns)},')
+    click.echo(f'they need to be ["OBJECTID", "PrimaryAdd", "ZN", '
+               f'"State", "Zip"]')
     exit()
 
   ss_list = ss_input.dropna(subset=['PrimaryAdd']).values.tolist()
