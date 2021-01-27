@@ -6,22 +6,23 @@ from pathlib import Path
 import string
 from tqdm import tqdm
 import ujson
+import yaml
 
 from badb import geoutils, data_utils
 
 ## INPUT ##
 ROOT_DIR = data_utils.ROOT_DIR
-CONFIG_FILE = ROOT_DIR / Path('config.csv')
-DATA_DIR = ROOT_DIR / Path('data')
-FIXED_OUTPUT = DATA_DIR / Path('01_ss_fixed.csv.gz')
+CONFIG_FILE = ROOT_DIR / 'creds.yml'
+DATA_DIR = ROOT_DIR / 'data/intermediate'
+FIXED_OUTPUT = DATA_DIR / '01_ss_fixed.csv.gz'
 
 ## OUTPUT ##
-TOTAL_OUTPUT_FILE = DATA_DIR / Path('10_ss_total.csv.gz')
+TOTAL_OUTPUT_FILE = DATA_DIR / '10_ss_total.csv.gz'
 
 df = pd.read_csv(FIXED_OUTPUT, compression='gzip')
 temp = pd.json_normalize(
   df.output.apply(ujson.loads))
-df.drop(['output', 'zipcode'], axis = 1, inplace=True) # zipcode is dropped because of overlap
+df.drop(['output', 'zipcode'], axis=1, inplace=True) # zipcode is dropped because of overlap
 init_df = pd.concat([df, temp], axis=1)
 
 single_units = init_df[(init_df.dpv_match_code == 'Y')].reset_index(drop=True)
@@ -39,8 +40,9 @@ if not multi_units.empty:
   perm_list = geoutils.create_perm(num, alpha, separate=False)
   perm_list = sorted(perm_list, key=len, reverse=True)
 
-  with open(CONFIG_FILE, 'rt') as infile:
-    SS_AUTH_ID, SS_AUTH_TOKEN = infile.read().strip().split(',')
+  creds = yaml.load(open(CONFIG_FILE), Loader=yaml.FullLoader)
+  SS_AUTH_ID, SS_AUTH_TOKEN = creds['AUTH_ID'], creds['AUTH_TOKEN']
+
   # mu_rerun is a list of just the addresses for the multi_unit addresses
   ## mu = multi units
   mu_rerun = multi_units[['OBJECTID', 'street', 'city', 'state', 'zipcode']].values.tolist()
