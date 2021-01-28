@@ -12,12 +12,16 @@ from badb import geoutils, data_utils
 
 ## INPUT ##
 ROOT_DIR = data_utils.ROOT_DIR
+
+DATA_DIR = ROOT_DIR / 'data'
+RAW_DATA_DIR = DATA_DIR / 'raw'
+INTERMEDIATE_DATA_DIR = DATA_DIR / 'intermediate'
 CONFIG_FILE = ROOT_DIR / 'creds.yml'
-DATA_DIR = ROOT_DIR / 'data/intermediate'
-FIXED_OUTPUT = DATA_DIR / '01_ss_fixed.csv.gz'
+
+FIXED_OUTPUT = INTERMEDIATE_DATA_DIR / '01_ss_fixed.csv.gz'
 
 ## OUTPUT ##
-TOTAL_OUTPUT_FILE = DATA_DIR / '10_ss_total.csv.gz'
+TOTAL_OUTPUT_FILE = INTERMEDIATE_DATA_DIR / '10_ss_total.csv.gz'
 
 df = pd.read_csv(FIXED_OUTPUT, compression='gzip')
 temp = pd.json_normalize(
@@ -51,8 +55,8 @@ if not multi_units.empty:
                                     repeat(SS_AUTH_ID),
                                     repeat(SS_AUTH_TOKEN)))))
 
-  alpha = list(string.ascii_uppercase[:15])
-  perm_total = geoutils.create_perm(geoutils.appropriate_nums(range(1001, 10000)), alpha) \
+  alpha = list(string.ascii_uppercase[:5])
+  perm_total = geoutils.create_perm(geoutils.appropriate_nums(range(1001, 2000)), alpha) \
                + geoutils.create_perm(geoutils.appropriate_nums(range(101, 1000)), alpha) \
                + geoutils.create_perm(geoutils.appropriate_nums(range(11, 100)), alpha) \
                + geoutils.create_perm(range(1, 10), alpha) + [alpha]

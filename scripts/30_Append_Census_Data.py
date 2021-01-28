@@ -7,11 +7,16 @@ from badb import geoutils, data_utils
 
 ## INPUT ##
 ROOT_DIR = data_utils.ROOT_DIR
-DATA_DIR = ROOT_DIR / Path('data')
-TOTAL_OUTPUT_FILE = DATA_DIR / Path('10_ss_total.csv.gz')
+
+DATA_DIR = ROOT_DIR / 'data'
+RAW_DATA_DIR = DATA_DIR / 'raw'
+INTERMEDIATE_DATA_DIR = DATA_DIR / 'intermediate'
+CONFIG_FILE = ROOT_DIR / 'creds.yml'
+
+TOTAL_OUTPUT_FILE = INTERMEDIATE_DATA_DIR / Path('10_ss_total.csv.gz')
 RI_CRS = 'epsg:6568'
 ## OUTPUT ##
-CENSUS_JOINED_OUTPUT = DATA_DIR / Path('20_ss_census.csv.gz')
+CENSUS_JOINED_OUTPUT = INTERMEDIATE_DATA_DIR / Path('20_ss_census.csv.gz')
 
 df = pd.read_csv(TOTAL_OUTPUT_FILE,
                  compression='gzip')
