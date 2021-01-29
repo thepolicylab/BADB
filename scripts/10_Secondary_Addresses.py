@@ -21,7 +21,7 @@ CONFIG_FILE = ROOT_DIR / 'creds.yml'
 FIXED_OUTPUT = INTERMEDIATE_DATA_DIR / '01_ss_fixed.csv.gz'
 
 ## OUTPUT ##
-TOTAL_OUTPUT_FILE = INTERMEDIATE_DATA_DIR / '10_ss_total.csv.gz'
+TOTAL_OUTPUT_FILE = INTERMEDIATE_DATA_DIR / '20_ss_total.csv.gz'
 
 df = pd.read_csv(FIXED_OUTPUT, compression='gzip')
 temp = pd.json_normalize(
@@ -54,12 +54,13 @@ if not multi_units.empty:
                                     repeat(perm_list),
                                     repeat(SS_AUTH_ID),
                                     repeat(SS_AUTH_TOKEN)))))
+  mu_init.drop_duplicates(subset=['street', 'city', 'state', 'zipcode', 'secondary'], inplace=True)
 
   alpha = list(string.ascii_uppercase[:5])
-  perm_total = geoutils.create_perm(geoutils.appropriate_nums(range(1001, 2000)), alpha) \
-               + geoutils.create_perm(geoutils.appropriate_nums(range(101, 1000)), alpha) \
-               + geoutils.create_perm(geoutils.appropriate_nums(range(11, 100)), alpha) \
-               + geoutils.create_perm(range(1, 10), alpha) + [alpha]
+  perm_total = geoutils.create_perm(geoutils.appropriate_nums(range(1001, 1006)), alpha) \
+               + geoutils.create_perm(geoutils.appropriate_nums(range(101, 500)), alpha) \
+               + geoutils.create_perm(geoutils.appropriate_nums(range(11, 50)), alpha) \
+               + geoutils.create_perm(range(1, 6), alpha) + [alpha]
   perm_dict = dict(zip(perm_list, perm_total))
 
   # Expansive search

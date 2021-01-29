@@ -155,7 +155,8 @@ def appropriate_nums(num_list: Iterable[int]) -> List[int]:
     given that most apartments do not have more than 40 rooms per floor
         ex) [100, 101, 102, .... 198, 199] -> [100, 101, ..., 138, 139]
     """
-    return [x for x in num_list if x % 100 < 10]
+
+    return [x for x in num_list if ((x < 100) & (x % 10 < 6)) | (x % 100 < 6)]
 
 
 def df_prep(match_cond: Union[str, int], df: pd.DataFrame) -> pd.DataFrame:
